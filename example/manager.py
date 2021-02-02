@@ -179,6 +179,7 @@ managed_processes = {
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "rtshield": "selfdrive.rtshield",
   "interbridged": "selfdrive.interbridge.interbridged",
+  "livedashserverd": "livedash.serverd",
 }
 
 daemon_processes = {
@@ -207,6 +208,7 @@ persistent_processes = [
   'uploader',
   'deleter',
   'interbridged',
+  "livedashserverd",
 ]
 
 if not PC:
