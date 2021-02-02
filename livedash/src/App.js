@@ -57,7 +57,7 @@ class App extends Component {
     this.state = {
       selectedTab: 1,
       show_mainsettings: false,
-      ws_url: 'ws://192.168.43.1:4545',
+      ws_url: 'ws://192.168.43.1:8989',
       rateHz: 20,
       render_revision: 0,
     };

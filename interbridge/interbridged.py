@@ -6,7 +6,7 @@ from common.realtime import Ratekeeper
 from queue import SimpleQueue as Queue
 
 RATE = 20.  # In Hz
-PORT = 4545
+PORT = 8989
 
 
 class InterBridge:
@@ -88,7 +88,7 @@ class InterBridge:
 
 def main(sm=None, pm=None, logcan=None):
   bridge = InterBridge(sm, pm, logcan)
-  sock_server = MixedSocketServer('0.0.0.0:4545')
+  sock_server = MixedSocketServer('0.0.0.0:'+str(PORT))
   sock_server.msg_received = bridge.sock_msg_received
   bridge.sock_msg_send = sock_server.broadcast
   ib_thread = Thread(

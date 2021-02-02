@@ -63,7 +63,7 @@ export class MainSettings extends Component {
                     'aria-label': 'WebSocket URL',
                   }}
                 />
-                <FormHelperText id="ws_url-helper-text">Tethered WiFi ws://192.168.43.1:4545</FormHelperText>
+                <FormHelperText id="ws_url-helper-text">Tethered WiFi ws://192.168.43.1:8989</FormHelperText>
               </FormControl>
             </Grid>
             <Grid item>
