@@ -192,7 +192,6 @@ class GraphDashboard extends Component {
         >
         {this.renderReadyPlots()}
         </Grid>
-
         {this.state.show_addlines ? (
             <AddLines
               setLogParams={event => { this.setState({ show_addlines: false }); this.selected = event }}
@@ -217,8 +216,6 @@ class GraphDashboard extends Component {
               webgl={this.state.webgl}
             />
           ) : (null)}
-
-
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
           className={classes.speedDial}
