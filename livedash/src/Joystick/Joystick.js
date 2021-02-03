@@ -1,14 +1,16 @@
 import React, { Component, Fragment } from 'react';
 import propTypes from 'prop-types';
 
+import { JoystickSettings } from './JoystickSettings';
 import ReactNipple from 'react-nipple';
 
 import { withStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 
 import SyncIcon from '@material-ui/icons/Sync';
 import SyncDisabledIcon from '@material-ui/icons/SyncDisabled';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const styles = theme => ({
   joystick: {
@@ -28,8 +30,7 @@ class Joystick extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      restJoystick_0: true,
-      restJoystick_1: true,
+      show_settings: false,
       rateHz: 10,
       revision: 0,
       speeddial: false,
@@ -42,18 +43,21 @@ class Joystick extends Component {
       axes: [0, 0, 0, 0], // Axis 0, 1, 2, 3
       buttons: [],
       enabled: true,
-      axesMode: ['interceptor', 'interceptor', 'interceptor', 'interceptor']
+      axesMode: ['', '', '', ''] // Axis 0, 1, 2, 3
     }
   };
 
   joy_finetune = {
     axes_scale: [
-      [1, 1],
-      [1, 1],
-      [1, 1],
-      [1, 1],
+      [1, 1], // axis_0
+      [1, 1], // axis_1
+      [1, 1], // axis_2
+      [1, 1], // axis_3
     ],
-    axes_deadzone: [0.01, 0.01, 0.01, 0.01]
+    axes_deadzone: [0.01, 0.01, 0.01, 0.01], // Axis 0, 1, 2, 3
+    restJoystick_0: true,
+    restJoystick_1: true,
+    axesMode: ['interceptor', 'interceptor', 'interceptor', 'interceptor'],
   }
 
   last_timestamp = 0;
@@ -61,7 +65,7 @@ class Joystick extends Component {
 
   componentDidMount() {
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz);
-    this.checkJoy = setInterval(this.readJoystick, 50);
+    this.checkJoy = setInterval(this.realGamepad, 50);
   }
 
   componentWillUnmount() {
@@ -70,12 +74,15 @@ class Joystick extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.revision !== this.state.revision || nextState.speeddial !== this.state.speeddial;
+    return nextState.revision !== this.state.revision || nextState.speeddial !== this.state.speeddial || nextState !== this.state.show_settings;
   }
 
   renderDelay = () => {
     clearInterval(this.render_delay);
-    if (this.state.enabled) this.props.procData(this.joystick_msg);
+    if (this.state.enabled) {
+      this.joystick_msg.testJoystick.axesMode = this.joy_finetune.axesMode;
+      this.props.procData(this.joystick_msg);
+    }
     if (this.state.revision !== this.data_revision) this.setState({ revision: this.data_revision });
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz);
   };
@@ -86,7 +93,7 @@ class Joystick extends Component {
     this.props.procData(this.joystick_msg);
   }
 
-  readJoystick = () => {
+  realGamepad = () => {
     const gamepads = navigator.getGamepads();
     Object.values(gamepads).forEach(gamepad => {
       if (!gamepad ||
@@ -95,9 +102,9 @@ class Joystick extends Component {
 
       gamepad.axes.forEach((value, index) => {
         let axis = value;
-        const deadzone = this.joy_finetune.axes_deadzone[index];
-        const scale_neg = this.joy_finetune.axes_scale[index][0];
-        const scale_pos = this.joy_finetune.axes_scale[index][1];
+        const deadzone = parseFloat(this.joy_finetune.axes_deadzone[index]);
+        const scale_neg = parseFloat(this.joy_finetune.axes_scale[index][0]);
+        const scale_pos = parseFloat(this.joy_finetune.axes_scale[index][1]);
         if (-deadzone < axis && axis < deadzone) axis = 0;
         if (axis < 0) axis *= scale_neg;
         else axis *= scale_pos;
@@ -114,7 +121,7 @@ class Joystick extends Component {
     })
   }
 
-  returnNormalized = (joy_index, data) => {
+  virtualJoystick = (joy_index, data) => {
     if (data === 0) {
       this.joystick_msg.testJoystick.axes[joy_index] = 0;
       this.joystick_msg.testJoystick.axes[joy_index + 1] = 0;
@@ -125,10 +132,10 @@ class Joystick extends Component {
     let axis_x = (data.position.x - data.instance.position.x) / size_scale * !data.lockX;
     let axis_y = (data.position.y - data.instance.position.y) / size_scale * !data.lockY;
     const axes_scale = this.joy_finetune.axes_scale;
-    if (axis_x < 0) axis_x *= axes_scale[joy_index][0];
-    else axis_x *= axes_scale[joy_index][1];
-    if (axis_y < 0) axis_y *= axes_scale[joy_index + 1][0];
-    else axis_y *= axes_scale[joy_index + 1][1];
+    if (axis_x < 0) axis_x *= parseFloat(axes_scale[joy_index][0]);
+    else axis_x *= parseFloat(axes_scale[joy_index][1]);
+    if (axis_y < 0) parseFloat(axis_y *= axes_scale[joy_index + 1][0]);
+    else axis_y *= parseFloat(axes_scale[joy_index + 1][1]);
     this.joystick_msg.testJoystick.axes[joy_index] = axis_x;
     this.joystick_msg.testJoystick.axes[joy_index + 1] = axis_y;
     this.data_revision += 1;
@@ -139,7 +146,6 @@ class Joystick extends Component {
     const { classes } = this.props;
     return (
       <Fragment>
-
         <Grid
           className={classes.joystick}
           container
@@ -149,36 +155,56 @@ class Joystick extends Component {
           alignItems="center"
         >
           <Grid item xs={6} align="center">
-            X:{this.joystick_msg.testJoystick.axes[0].toFixed(3)}/Y:{this.joystick_msg.testJoystick.axes[1].toFixed(3)}
-            <div>
-              <ReactNipple
-                options={{ mode: 'dynamic', position: { top: '50%', left: '50%' }, color: 'red', size: 200, dynamicPage: true, lockY: false, restJoystick: this.state.restJoystick_0, threshold: 0.06 }}
-                style={{
-                  outline: '1px dashed grey',
-                  //width: 250,
-                  height: '75vh',
-                  position: 'relative'
-                }}
-                onMove={(evt, data) => this.returnNormalized(0, data)}
-                onEnd={() => { if (this.state.restJoystick_0) this.returnNormalized(0, 0) }} // Reseting to 0 on joystick rest (only when restJoystick: true)
-              />
-            </div>
+            <Typography variant="subtitle2">
+              X:{this.joystick_msg.testJoystick.axes[0].toFixed(3)} /
+              Y:{this.joystick_msg.testJoystick.axes[1].toFixed(3)}
+            </Typography>
+            <ReactNipple
+              options={{
+                mode: 'semi',
+                position: { top: '50%', left: '50%' },
+                color: 'red',
+                size: 200,
+                dynamicPage: true,
+                lockX: false,
+                lockY: false,
+                restJoystick: this.joy_finetune.restJoystick_0,
+                threshold: 0.06
+              }}
+              style={{
+                outline: '1px dashed grey',
+                height: '75vh',
+                position: 'relative'
+              }}
+              onMove={(evt, data) => this.virtualJoystick(0, data)}
+              onEnd={() => { if (this.joy_finetune.restJoystick_0) this.virtualJoystick(0, 0) }} // Reseting to 0 on joystick rest (only when restJoystick: true)
+            />
           </Grid>
           <Grid item xs={6} align="center">
-            X:{this.joystick_msg.testJoystick.axes[2].toFixed(3)}/Y:{this.joystick_msg.testJoystick.axes[3].toFixed(3)}
-            <div>
-              <ReactNipple
-                options={{ mode: 'dynamic', position: { top: '50%', left: '50%' }, color: 'red', size: 200, dynamicPage: true, lockX: false, restJoystick: this.state.restJoystick_1, threshold: 0.06 }}
-                style={{
-                  outline: '1px dashed grey',
-                  //width: 250,
-                  height: '75vh',
-                  position: 'relative'
-                }}
-                onMove={(evt, data) => this.returnNormalized(2, data)}
-                onEnd={() => { if (this.state.restJoystick_1) this.returnNormalized(2, 0) }}
-              />
-            </div>
+            <Typography variant="subtitle2">
+              X:{this.joystick_msg.testJoystick.axes[2].toFixed(3)} /
+              Y:{this.joystick_msg.testJoystick.axes[3].toFixed(3)}
+            </Typography>
+            <ReactNipple
+              options={{
+                mode: 'semi',
+                position: { top: '50%', left: '50%' },
+                color: 'red',
+                size: 200,
+                dynamicPage: true,
+                lockX: false,
+                lockY: false,
+                restJoystick: this.joy_finetune.restJoystick_1,
+                threshold: 0.06
+              }}
+              style={{
+                outline: '1px dashed grey',
+                height: '75vh',
+                position: 'relative'
+              }}
+              onMove={(evt, data) => this.virtualJoystick(2, data)}
+              onEnd={() => { if (this.joy_finetune.restJoystick_1) this.virtualJoystick(2, 0) }}
+            />
           </Grid>
         </Grid>
         <SpeedDial
@@ -195,7 +221,20 @@ class Joystick extends Component {
             tooltipOpen
             onClick={() => this.setState({ enabled: !this.state.enabled }, this.resetMessage)}
           />
+          <SpeedDialAction
+            icon={<SettingsIcon />}
+            tooltipTitle="Settings"
+            tooltipOpen
+            onClick={() => { this.setState({ show_settings: true }) }}
+          />
         </SpeedDial>
+        {this.state.show_settings ? (
+          <JoystickSettings
+            setSettings={(joy_finetune) => { this.setState({ show_settings: false }); this.joy_finetune = joy_finetune }}
+            show={this.state.show_settings}
+            joy_finetune={this.joy_finetune}
+          />
+        ) : (null)}
       </Fragment>
     );
   }
