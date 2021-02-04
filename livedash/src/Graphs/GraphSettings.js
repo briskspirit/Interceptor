@@ -32,7 +32,8 @@ export class GraphSettings extends Component {
     this.setState({
       cols: this.props.cols,
       rateHz: this.props.rateHz,
-      max_datapoints: this.props.max_datapoints
+      max_datapoints: this.props.max_datapoints,
+      webgl: this.props.webgl,
     });
   }
 
