@@ -11,7 +11,7 @@ export class ScatterPlot extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: {},
+      data: Object.values(this.props.lines),
       layout: {
         xaxis: {
           autorange: true,
@@ -23,7 +23,6 @@ export class ScatterPlot extends Component {
         },
         showlegend: true,
         legend: { x: 0, y: 1.4 },
-        //autosize: true,
         width: 700,
         height: 450,
         margin: {
@@ -44,7 +43,9 @@ export class ScatterPlot extends Component {
     };
     this.responsiveChartRef = React.createRef();
   }
-  
+
+  layout = {};
+
   componentDidMount() {
     const el_width = this.responsiveChartRef.current.getBoundingClientRect().width - 5;
     const el_height = this.responsiveChartRef.current.getBoundingClientRect().height;
@@ -68,15 +69,19 @@ export class ScatterPlot extends Component {
 
   render() {
     //console.log("Rendering ScatterPlot: " + this.props.event.layout.title );
-    return (<div ref={this.responsiveChartRef} style={{ height: '46vh' }}>
-      <Plot
-        data={Object.values(this.props.lines)}
-        layout={{ ...this.state.layout, ...this.props.event.layout }}
-        revision={this.props.event.revision}
-        frames={[...this.state.frames, ...this.props.event.frames]}
-        config={{ ...this.state.config, ...this.props.event.config }}
-      />
-    </div>);
+    return (
+      <div ref={this.responsiveChartRef} id={this.props.event.layout.title} style={{ height: '46vh' }}>
+        <Plot
+          data={this.state.data}
+          layout={{ ...this.state.layout, ...this.layout, ...this.props.event.layout }}
+          revision={this.props.event.revision}
+          frames={[...this.state.frames, ...this.props.event.frames]}
+          config={{ ...this.state.config, ...this.props.event.config }}
+          //onInitialized={figure => this.setState(figure)}
+          onUpdate={figure => this.layout = figure.layout}
+        />
+      </div>
+    );
   }
 }
 
