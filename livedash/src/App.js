@@ -54,10 +54,11 @@ const theme = createMuiTheme ({
 class App extends Component {
   constructor(props) {
     super(props);
+    if (window.location.hostname !== 'localhost') this.ws_url = `ws://${window.location.hostname}:8989`;
     this.state = {
       selectedTab: 1,
       show_mainsettings: false,
-      ws_url: 'ws://192.168.43.1:8989',
+      ws_url: this.ws_url || 'ws://192.168.43.1:8989',
       rateHz: 20,
       render_revision: 0,
     };
