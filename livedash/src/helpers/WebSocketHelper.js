@@ -11,7 +11,7 @@ export class WebSocketHelper extends Component {
 
   }
 
-  timeout = 250;
+  timeout = 250;  // milliseconds
 
   componentDidMount() {
     this.connect();
@@ -45,14 +45,14 @@ export class WebSocketHelper extends Component {
     ws.onclose = e => {
       console.log(
         `Socket is closed. Reconnect will be attempted in ${Math.min(
-          10000 / 1000,
+          5000 / 1000,
           (that.timeout * 2) / 1000
         )} second.`,
         e.reason
       );
       this.props.status("closed");
       that.timeout = that.timeout * 2;
-      connectInterval = setTimeout(this.checkSocketConnection, Math.min(10000, that.timeout));
+      connectInterval = setTimeout(this.checkSocketConnection, Math.min(5000, that.timeout));
     };
 
     ws.onerror = err => {
