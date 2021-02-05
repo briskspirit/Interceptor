@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import propTypes from 'prop-types';
 
 import GraphDashboard from './Graphs/GraphDashboard';
@@ -37,9 +37,9 @@ const styles = {
   },
 };
 
-const theme = createMuiTheme ({
-  palette:{
-     type: "light",
+const theme = createMuiTheme({
+  palette: {
+    type: "light",
   },
   typography: {
     "fontFamily": `"Roboto", "Helvetica", "Arial", sans-serif`,
@@ -47,7 +47,7 @@ const theme = createMuiTheme ({
     "fontWeightLight": 300,
     "fontWeightRegular": 400,
     "fontWeightMedium": 500
-   }
+  }
 });
 
 
@@ -97,7 +97,37 @@ class App extends Component {
   };
 
   connectionStatus = () => {
-    if (this.ws_status === "connected") return <SignalWifi4BarIcon />;
+    if (this.ws_status === "connected") return (
+      <>
+        <Box className={this.props.classes.iconSpaced}>
+          <Badge
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            badgeContent={this.received_count}
+            color="secondary"
+            showZero max={9999}
+          >
+            <ArrowDownwardIcon color="inherit" />
+          </Badge>
+        </Box>
+        <Box className={this.props.classes.iconSpaced}>
+          <Badge
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            badgeContent={this.sent_count}
+            color="secondary"
+            showZero max={9999}
+          >
+            <ArrowUpwardIcon color="inherit" />
+          </Badge>
+        </Box>
+        <SignalWifi4BarIcon />
+      </>
+    );
     else if (this.ws_status === "connecting") return <SignalWifi0BarIcon />;
     else return <SignalWifiOffIcon />;
   }
@@ -113,88 +143,65 @@ class App extends Component {
     //console.log("Rendering App");
     const { classes } = this.props;
     return (
-      <Fragment>
-        <ThemeProvider theme = {theme}>
-        <WebSocketHelper
-          ws_url={this.state.ws_url}
-          messageProcess={this.messageProcess}
-          ref={this.wshelper}
-          status={status => this.ws_status = status}
-        />
-        <AppBar position="sticky" color="inherit">
-          <Toolbar>
-            <Tabs
-              className={classes.mainTabs}
-              value={this.state.selectedTab}
-              onChange={(event, newValue) => this.setState({ selectedTab: newValue })}
-              indicatorColor="secondary"
-              textColor="primary"
-              variant="scrollable"
-              scrollButtons="auto"
-              aria-label="Plugins tabs"
-            >
-              <Tab label="Dashboard" disabled {...this.a11yProps(0)} />
-              <Tab label="Graphs" {...this.a11yProps(1)} />
-              <Tab label="Joystick" {...this.a11yProps(2)} />
-              <Tab label="OP Edit" disabled {...this.a11yProps(3)} />
-              <Tab label="CAN BUS" disabled {...this.a11yProps(4)} />
-            </Tabs>
-            <Box className={classes.iconSpaced}>
-              <Badge anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-                badgeContent={this.received_count}
-                color="secondary"
-                showZero max={9999}
-              >
-                <ArrowDownwardIcon color="inherit"/>
-              </Badge>
-            </Box>
-            <Box className={classes.iconSpaced}>
-              <Badge anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-                badgeContent={this.sent_count}
-                color="secondary"
-                showZero max={9999}
-              >
-                <ArrowUpwardIcon color="inherit"/>
-              </Badge>
-            </Box>
-            {this.connectionStatus()}
-            <IconButton onClick={() => { this.setState({ show_mainsettings: true }) }} aria-label="WebSocket connection status" component="span" color="inherit">
-              <SettingsIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-
-        <TabPanel value={this.state.selectedTab} index={0}>
-          Dashboard will be here
-      </TabPanel>
-        <TabPanel value={this.state.selectedTab} index={1}>
-          <GraphDashboard ref={this.pushgraphdata} />
-        </TabPanel>
-        <TabPanel value={this.state.selectedTab} index={2}>
-          <Joystick procData={data => this.sendWSmsg(data)} />
-        </TabPanel>
-        <TabPanel value={this.state.selectedTab} index={3}>
-          OP_Edit will be here
-      </TabPanel>
-        <TabPanel value={this.state.selectedTab} index={4}>
-          CAN messages will be here
-      </TabPanel>
-      {this.state.show_mainsettings ? (
-          <MainSettings
-            setSettings={(ws_url, rate) => this.setState({ show_mainsettings: false, ws_url: ws_url, rateHz: rate })}
-            show={this.state.show_mainsettings}
+      <>
+        <ThemeProvider theme={theme}>
+          <WebSocketHelper
             ws_url={this.state.ws_url}
-            rateHz={this.state.rateHz}
+            messageProcess={this.messageProcess}
+            ref={this.wshelper}
+            status={status => this.ws_status = status}
           />
-        ) : (null)}
-      </ThemeProvider>
-      </Fragment>
+          <AppBar position="sticky" color="inherit">
+            <Toolbar>
+              <Tabs
+                className={classes.mainTabs}
+                value={this.state.selectedTab}
+                onChange={(event, newValue) => this.setState({ selectedTab: newValue })}
+                indicatorColor="secondary"
+                textColor="primary"
+                variant="scrollable"
+                scrollButtons="auto"
+                aria-label="Plugins tabs"
+              >
+                <Tab label="Dashboard" disabled {...this.a11yProps(0)} />
+                <Tab label="Graphs" {...this.a11yProps(1)} />
+                <Tab label="Joystick" {...this.a11yProps(2)} />
+                <Tab label="OP Edit" disabled {...this.a11yProps(3)} />
+                <Tab label="CAN BUS" disabled {...this.a11yProps(4)} />
+              </Tabs>
+
+              {this.connectionStatus()}
+              <IconButton onClick={() => { this.setState({ show_mainsettings: true }) }} aria-label="WebSocket connection status" component="span" color="inherit">
+                <SettingsIcon />
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+
+          <TabPanel value={this.state.selectedTab} index={0}>
+            Dashboard will be here
+      </TabPanel>
+          <TabPanel value={this.state.selectedTab} index={1}>
+            <GraphDashboard ref={this.pushgraphdata} />
+          </TabPanel>
+          <TabPanel value={this.state.selectedTab} index={2}>
+            <Joystick procData={data => this.sendWSmsg(data)} />
+          </TabPanel>
+          <TabPanel value={this.state.selectedTab} index={3}>
+            OP_Edit will be here
+      </TabPanel>
+          <TabPanel value={this.state.selectedTab} index={4}>
+            CAN messages will be here
+      </TabPanel>
+          {this.state.show_mainsettings ? (
+            <MainSettings
+              setSettings={(ws_url, rate) => this.setState({ show_mainsettings: false, ws_url: ws_url, rateHz: rate })}
+              show={this.state.show_mainsettings}
+              ws_url={this.state.ws_url}
+              rateHz={this.state.rateHz}
+            />
+          ) : (null)}
+        </ThemeProvider>
+      </>
     );
   }
 }
