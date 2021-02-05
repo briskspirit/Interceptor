@@ -17,7 +17,7 @@ export class WebSocketHelper extends Component {
     this.connect();
     this.keep_alive = setInterval(() => {
       this.sendMessage({ keepAlive: {} });
-    }, 1000);
+    }, 2500);
   }
 
   componentWillUnmount() {
