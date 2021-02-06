@@ -30,9 +30,9 @@ Features
 Requirements
 ============
 
-⋅⋅* OpenPilot supported device (EON/C2 etc.) with tethered WiFi connection or connected to the same WiFi network.
-⋅⋅* Any device with a web browser(Safari/Firefox/Chromium-based browser) connected to OpenPilot thorugh WiFi or the same WiFi network.
-⋅⋅* (recommended) Wired/Wireless gamepad that is supported by your OS. (Example: Gamesir T4pro)
+ - OpenPilot supported device (EON/C2 etc.) with tethered WiFi connection or connected to the same WiFi network.
+ - Any device with a web browser(Safari/Firefox/Chromium-based browser) connected to OpenPilot thorugh WiFi or the same WiFi network.
+ - (recommended) Wired/Wireless gamepad that is supported by your OS. (Example: Gamesir T4pro)
 
 Setup
 ============
@@ -43,6 +43,13 @@ Easiest method:
 2. Connect to your OP device in tethered WiFi mode(hotspot).
 
 3. Enter in your browser `http://192.168.43.1:89` (or change to IP of your OP device if different)
+
+Method for Windows-based laptops/tablets(to work with Gamepad API):
+
+Steps 1 and 2 from above plus also download `livedash/build` directory to your computer and run `served.py`, enter in your browser `http://localhost:89`
+
+Reason for this is that modern versions of Firefox/Chrome won't allow Gamepad API to work from insecure source(http://), but localhost considered secure.
+And there is no way to run WebSocket in secure mode (wss://) as we don't have a domain name to issue SSL certificate to.
 
 
 Interceptor examples
