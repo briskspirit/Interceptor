@@ -19,7 +19,7 @@ class Interceptor:
 
   def override_axis(self, signal, index, part, scale=1.0):
     if (not self.enabled
-        or len(self.interceptor.axes) < index + 1
+        or index >= len(self.interceptor.axes)
         or part not in PARTS):
       return signal
 
@@ -40,14 +40,17 @@ class Interceptor:
 
     return signal_candidate
 
-  def override_button(self, signal, index, values=(True, False)):
+  def override_button(self, signal, index, boolean_type=True, scale=1.0, values=(True, False)):
     if (not self.enabled
-        or len(self.interceptor.buttons) < index + 1):
+        or index >= len(self.interceptor.buttons)):
       return signal
 
-    if self.interceptor.buttons[index]:
-      signal_candidate = values[0]
+    if boolean_type:
+      if self.interceptor.buttons[index] == 0.0:
+        signal_candidate = values[1]
+      else:
+        signal_candidate = values[0]
     else:
-      signal_candidate = values[1]
+      signal_candidate = self.interceptor.buttons[index] * scale
 
     return signal_candidate

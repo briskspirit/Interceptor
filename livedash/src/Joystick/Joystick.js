@@ -118,7 +118,7 @@ class Joystick extends Component {
 
       const buttons = [];
       Object.values(gamepad.buttons).forEach(button => {
-        buttons.push(button.pressed);
+        buttons.push(button.value);
       });
       this.joystick_msg.testJoystick.buttons = buttons;
       this.data_revision += 1;
