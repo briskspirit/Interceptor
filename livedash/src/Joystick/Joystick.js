@@ -105,12 +105,14 @@ class Joystick extends Component {
 
       gamepad.axes.forEach((value, index) => {
         let axis = value;
-        const deadzone = parseFloat(this.joy_finetune.axes_deadzone[index]);
-        const scale_neg = parseFloat(this.joy_finetune.axes_scale[index][0]);
-        const scale_pos = parseFloat(this.joy_finetune.axes_scale[index][1]);
-        if (-deadzone < axis && axis < deadzone) axis = 0;
-        if (axis < 0) axis *= scale_neg;
-        else axis *= scale_pos;
+        if (index < this.joy_finetune.axes_scale.length) { // Apply finetune options only for limited amount of axes(4)
+          const deadzone = parseFloat(this.joy_finetune.axes_deadzone[index]);
+          const scale_neg = parseFloat(this.joy_finetune.axes_scale[index][0]);
+          const scale_pos = parseFloat(this.joy_finetune.axes_scale[index][1]);
+          if (-deadzone < axis && axis < deadzone) axis = 0;
+          if (axis < 0) axis *= scale_neg;
+          else axis *= scale_pos;
+        }
         this.joystick_msg.testJoystick.axes[index] = axis;
       })
 
