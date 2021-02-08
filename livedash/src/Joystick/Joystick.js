@@ -62,6 +62,8 @@ class Joystick extends Component {
 
   last_timestamp = 0;
   data_revision = 0;
+  renderJoystick_0 = true;
+  renderJoystick_1 = true;
 
   componentDidMount() {
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz);
@@ -160,52 +162,54 @@ class Joystick extends Component {
               X:{this.joystick_msg.testJoystick.axes[0].toFixed(3)} /
               Y:{this.joystick_msg.testJoystick.axes[1].toFixed(3)}
             </Typography>
-            <ReactNipple
-              options={{
-                mode: 'semi',
-                position: { top: '50%', left: '50%' },
-                color: 'red',
-                size: 200,
-                dynamicPage: true,
-                lockX: false,
-                lockY: false,
-                restJoystick: this.joy_finetune.restJoystick_0,
-                threshold: 0.06
-              }}
-              style={{
-                outline: '1px dashed grey',
-                height: '75vh',
-                position: 'relative'
-              }}
-              onMove={(evt, data) => this.virtualJoystick(0, data)}
-              onEnd={() => { if (this.joy_finetune.restJoystick_0) this.virtualJoystick(0, 0) }} // Reseting to 0 on joystick rest (only when restJoystick: true)
-            />
+            {this.renderJoystick_0 ? (
+              <ReactNipple
+                options={{
+                  mode: 'semi',
+                  position: { top: '50%', left: '50%' },
+                  color: 'red',
+                  size: 200,
+                  dynamicPage: true,
+                  lockX: false,
+                  lockY: false,
+                  restJoystick: this.joy_finetune.restJoystick_0,
+                  threshold: 0.06
+                }}
+                style={{
+                  outline: '1px dashed grey',
+                  height: '75vh',
+                  position: 'relative'
+                }}
+                onMove={(evt, data) => this.virtualJoystick(0, data)}
+                onEnd={() => { if (this.joy_finetune.restJoystick_0) this.virtualJoystick(0, 0) }} // Reseting to 0 on joystick rest (only when restJoystick: true)
+              />) : (this.renderJoystick_0 = true, null)}
           </Grid>
           <Grid item xs={6} align="center">
             <Typography variant="subtitle2">
               X:{this.joystick_msg.testJoystick.axes[2].toFixed(3)} /
               Y:{this.joystick_msg.testJoystick.axes[3].toFixed(3)}
             </Typography>
-            <ReactNipple
-              options={{
-                mode: 'semi',
-                position: { top: '50%', left: '50%' },
-                color: 'red',
-                size: 200,
-                dynamicPage: true,
-                lockX: false,
-                lockY: false,
-                restJoystick: this.joy_finetune.restJoystick_1,
-                threshold: 0.06
-              }}
-              style={{
-                outline: '1px dashed grey',
-                height: '75vh',
-                position: 'relative'
-              }}
-              onMove={(evt, data) => this.virtualJoystick(2, data)}
-              onEnd={() => { if (this.joy_finetune.restJoystick_1) this.virtualJoystick(2, 0) }}
-            />
+            {this.renderJoystick_1 ? (
+              <ReactNipple
+                options={{
+                  mode: 'semi',
+                  position: { top: '50%', left: '50%' },
+                  color: 'red',
+                  size: 200,
+                  dynamicPage: true,
+                  lockX: false,
+                  lockY: false,
+                  restJoystick: this.joy_finetune.restJoystick_1,
+                  threshold: 0.06
+                }}
+                style={{
+                  outline: '1px dashed grey',
+                  height: '75vh',
+                  position: 'relative'
+                }}
+                onMove={(evt, data) => this.virtualJoystick(2, data)}
+                onEnd={() => { if (this.joy_finetune.restJoystick_1) this.virtualJoystick(2, 0) }}
+              />) : (this.renderJoystick_1 = true, null)}
           </Grid>
         </Grid>
         <SpeedDial
@@ -231,7 +235,14 @@ class Joystick extends Component {
         </SpeedDial>
         {this.state.show_settings ? (
           <JoystickSettings
-            setSettings={(joy_finetune) => { this.setState({ show_settings: false }); this.joy_finetune = joy_finetune }}
+            setSettings={
+              (joy_finetune) => {
+                this.setState({ show_settings: false });
+                this.joy_finetune = joy_finetune;
+                this.renderJoystick_0 = false;
+                this.renderJoystick_1 = false;
+              }
+            }
             show={this.state.show_settings}
             joy_finetune={this.joy_finetune}
           />

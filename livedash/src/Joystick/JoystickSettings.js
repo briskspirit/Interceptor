@@ -160,7 +160,7 @@ export class JoystickSettings extends Component {
                 </Grid>
                 <Grid item xs={12} align="center">
                   <FormControlLabel
-                    control={<Switch disabled checked={new_state.restJoystick_0} onChange={() => { new_state.restJoystick_0 = !new_state.restJoystick_0; this.setState(new_state); }} name="restJoystick_0" />}
+                    control={<Switch checked={new_state.restJoystick_0} onChange={() => { new_state.restJoystick_0 = !new_state.restJoystick_0; this.setState(new_state); }} name="restJoystick_0" />}
                     label="vJoystick_0 rest"
                   />
                 </Grid>
@@ -286,7 +286,7 @@ export class JoystickSettings extends Component {
                 </Grid>
                 <Grid item xs={12} align="center">
                   <FormControlLabel
-                    control={<Switch disabled checked={new_state.restJoystick_1} onChange={() => { new_state.restJoystick_1 = !new_state.restJoystick_1; this.setState(new_state); }} name="restJoystick_1" />}
+                    control={<Switch checked={new_state.restJoystick_1} onChange={() => { new_state.restJoystick_1 = !new_state.restJoystick_1; this.setState(new_state); }} name="restJoystick_1" />}
                     label="vJoystick_1 rest"
                   />
                 </Grid>
