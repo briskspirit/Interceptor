@@ -189,13 +189,13 @@ class App extends Component {
             Dashboard will be here
           </TabPanel>
           <TabPanel value={this.state.selectedTab} index={1}>
-            <GraphDashboard ref={this.pushgraphdata} />
+            <GraphDashboard ref={this.pushgraphdata} active={this.state.selectedTab === 1} />
           </TabPanel>
           <TabPanel value={this.state.selectedTab} index={2}>
-            <Joystick procData={data => this.sendWSmsg(data)} />
+            <Joystick procData={data => this.sendWSmsg(data)} active={this.state.selectedTab === 2} />
           </TabPanel>
           <TabPanel value={this.state.selectedTab} index={3}>
-            <OPEdit ref={this.pushopedit} procData={data => this.sendWSmsg(data)} />
+            <OPEdit ref={this.pushopedit} procData={data => this.sendWSmsg(data)} active={this.state.selectedTab === 3} />
           </TabPanel>
           <TabPanel value={this.state.selectedTab} index={4}>
             CAN messages will be here

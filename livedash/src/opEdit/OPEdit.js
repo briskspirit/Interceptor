@@ -55,6 +55,7 @@ class OPEdit extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (!this.props.active) return false;
     return nextState.revision !== this.state.revision;
   }
 
@@ -187,6 +188,7 @@ class OPEdit extends Component {
 OPEdit.propTypes = {
   classes: propTypes.object.isRequired,
   procData: propTypes.func.isRequired,
+  active: propTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(OPEdit);

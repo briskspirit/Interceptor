@@ -74,6 +74,7 @@ class Joystick extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (!this.props.active) return false;
     return nextState.revision !== this.state.revision || nextState.speeddial !== this.state.speeddial || nextState !== this.state.show_settings;
   }
 
@@ -243,6 +244,7 @@ class Joystick extends Component {
 Joystick.propTypes = {
   classes: propTypes.object.isRequired,
   procData: propTypes.func.isRequired,
+  active: propTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(Joystick);

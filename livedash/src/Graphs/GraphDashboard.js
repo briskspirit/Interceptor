@@ -89,6 +89,7 @@ class GraphDashboard extends Component {
   }
 
   shouldComponentUpdate(prevProps, prevState) {
+    if (!this.props.active) return false;
     return prevState.render_revision !== this.state.render_revision;
   }
 
@@ -190,32 +191,32 @@ class GraphDashboard extends Component {
           justify="flex-start"
           alignItems="flex-start"
         >
-        {this.renderReadyPlots()}
+          {this.renderReadyPlots()}
         </Grid>
         {this.state.show_addlines ? (
-            <AddLines
-              setLogParams={event => { this.setState({ show_addlines: false }); this.selected = event }}
-              show={this.state.show_addlines}
-              prev_selection={this.selected}
-            />
-          ) : (null)}
-          {this.state.show_addgraph ? (
-            <AddGraph
-              addplot={(plot_name, lines) => this.setState({ show_addgraph: false }, this.addUpdatePlots(plot_name, lines))}
-              show={this.state.show_addgraph}
-              lines_available={Object.keys(this.lines)}
-            />
-          ) : (null)}
-          {this.state.show_settings ? (
-            <GraphSettings
-              setSettings={(cols, rate, datapoints, webgl) => this.setState({ show_settings: false, layout_cols: cols, rateHz: rate, max_datapoints: datapoints, webgl: webgl })}
-              show={this.state.show_settings}
-              cols={this.state.layout_cols}
-              rateHz={this.state.rateHz}
-              max_datapoints={this.state.max_datapoints}
-              webgl={this.state.webgl}
-            />
-          ) : (null)}
+          <AddLines
+            setLogParams={event => { this.setState({ show_addlines: false }); this.selected = event }}
+            show={this.state.show_addlines}
+            prev_selection={this.selected}
+          />
+        ) : (null)}
+        {this.state.show_addgraph ? (
+          <AddGraph
+            addplot={(plot_name, lines) => this.setState({ show_addgraph: false }, this.addUpdatePlots(plot_name, lines))}
+            show={this.state.show_addgraph}
+            lines_available={Object.keys(this.lines)}
+          />
+        ) : (null)}
+        {this.state.show_settings ? (
+          <GraphSettings
+            setSettings={(cols, rate, datapoints, webgl) => this.setState({ show_settings: false, layout_cols: cols, rateHz: rate, max_datapoints: datapoints, webgl: webgl })}
+            show={this.state.show_settings}
+            cols={this.state.layout_cols}
+            rateHz={this.state.rateHz}
+            max_datapoints={this.state.max_datapoints}
+            webgl={this.state.webgl}
+          />
+        ) : (null)}
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
           className={classes.speedDial}
@@ -241,6 +242,7 @@ class GraphDashboard extends Component {
 
 GraphDashboard.propTypes = {
   classes: propTypes.object.isRequired,
+  active: propTypes.bool.isRequired,
 }
 
 export default withStyles(styles)(GraphDashboard);
