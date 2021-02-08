@@ -3,6 +3,7 @@ import propTypes from 'prop-types';
 
 import GraphDashboard from './Graphs/GraphDashboard';
 import Joystick from './Joystick/Joystick';
+import OPEdit from './opEdit/OPEdit';
 import { TabPanel } from './TabPanel';
 import { WebSocketHelper } from './helpers/WebSocketHelper';
 import { MainSettings } from './MainSettings';
@@ -64,6 +65,7 @@ class App extends Component {
     };
     this.wshelper = React.createRef();
     this.pushgraphdata = React.createRef();
+    this.pushopedit = React.createRef();
   }
 
   ws_status = '';
@@ -87,7 +89,8 @@ class App extends Component {
   messageProcess = msg_recv => { // Received messages must be pushed to child component for better performance
     if (this.received_count > 9999) this.received_count = 0;
     this.received_count += 1;
-    if (this.pushgraphdata.current) this.pushgraphdata.current.messageProcess(msg_recv);
+    if ('opEdit' in msg_recv) this.pushopedit.current.messageProcess(msg_recv);
+    else if (this.pushgraphdata.current) this.pushgraphdata.current.messageProcess(msg_recv);
   }
 
   sendWSmsg = msg => {
@@ -166,7 +169,7 @@ class App extends Component {
                 <Tab label="Dashboard" disabled {...this.a11yProps(0)} />
                 <Tab label="Graphs" {...this.a11yProps(1)} />
                 <Tab label="Joystick" {...this.a11yProps(2)} />
-                <Tab label="OP Edit" disabled {...this.a11yProps(3)} />
+                <Tab label="OP Edit" {...this.a11yProps(3)} />
                 <Tab label="CAN BUS" disabled {...this.a11yProps(4)} />
               </Tabs>
 
@@ -179,7 +182,7 @@ class App extends Component {
 
           <TabPanel value={this.state.selectedTab} index={0}>
             Dashboard will be here
-      </TabPanel>
+          </TabPanel>
           <TabPanel value={this.state.selectedTab} index={1}>
             <GraphDashboard ref={this.pushgraphdata} />
           </TabPanel>
@@ -187,11 +190,11 @@ class App extends Component {
             <Joystick procData={data => this.sendWSmsg(data)} />
           </TabPanel>
           <TabPanel value={this.state.selectedTab} index={3}>
-            OP_Edit will be here
-      </TabPanel>
+            <OPEdit ref={this.pushopedit} procData={data => this.sendWSmsg(data)} />
+          </TabPanel>
           <TabPanel value={this.state.selectedTab} index={4}>
             CAN messages will be here
-      </TabPanel>
+          </TabPanel>
           {this.state.show_mainsettings ? (
             <MainSettings
               setSettings={(ws_url, rate) => this.setState({ show_mainsettings: false, ws_url: ws_url, rateHz: rate })}
