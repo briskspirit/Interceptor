@@ -15,8 +15,10 @@ import {
   Tabs,
   Tab,
   Badge,
-  Box
+  Box,
+  Snackbar,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -71,6 +73,8 @@ class App extends Component {
   ws_status = '';
   sent_count = 0;
   received_count = 0;
+  show_error = false;
+  last_error_msg = "";
 
   componentDidMount() {
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz);
@@ -89,7 +93,8 @@ class App extends Component {
   messageProcess = msg_recv => { // Received messages must be pushed to child component for better performance
     if (this.received_count > 9999) this.received_count = 0;
     this.received_count += 1;
-    if ('opEdit' in msg_recv) this.pushopedit.current.messageProcess(msg_recv);
+    if ('error' in msg_recv) { this.show_error = true; this.last_error_msg = msg_recv.error; }
+    else if ('opEdit' in msg_recv) this.pushopedit.current.messageProcess(msg_recv);
     else if (this.pushgraphdata.current) this.pushgraphdata.current.messageProcess(msg_recv);
   }
 
@@ -203,6 +208,14 @@ class App extends Component {
               rateHz={this.state.rateHz}
             />
           ) : (null)}
+          <Snackbar
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+            open={this.show_error}
+            autoHideDuration={5000}
+            onClose={() => this.show_error = false}
+          >
+            <MuiAlert elevation={6} variant="filled" severity="error">{this.last_error_msg}</MuiAlert>
+          </Snackbar>
         </ThemeProvider>
       </>
     );
