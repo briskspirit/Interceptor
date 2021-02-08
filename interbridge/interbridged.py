@@ -4,6 +4,7 @@ from threading import Thread
 import cereal.messaging as messaging
 from common.realtime import Ratekeeper
 from queue import SimpleQueue as Queue
+import json
 
 RATE = 20.  # In Hz
 PORT = 8989
@@ -70,7 +71,23 @@ class InterBridge:
     # Send msg from Socket to ZMQ (only testJoystick!)
     while not self.msgs_queue.empty():
       msg = self.msgs_queue.get()
-      if 'testJoystick' in msg:
+
+      if 'opEdit' in msg:
+        if 'loadRequest' in msg['opEdit']:
+          try:
+            with open('op_params.json', 'r') as file:
+              data = file.read()
+              self.sock_msg_send({'opEdit': json.loads(data)})
+          except (FileNotFoundError, PermissionError):
+            self.sock_msg_send({'error': "File op_params.json not found."})
+        else:
+          try:
+            with open('op_params.json', 'w') as file:
+              file.write(json.dumps(msg['opEdit'], indent=2))
+          except PermissionError:
+            self.sock_msg_send({'error': "Can't write op_params.json, not enough permissions."})
+
+      elif 'testJoystick' in msg:
         dat = messaging.new_message('testJoystick')
         testJoystick = dat.testJoystick
         testJoystick.axes = msg['testJoystick']['axes']
