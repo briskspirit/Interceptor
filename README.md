@@ -17,6 +17,7 @@ Table of Contents
  * [Interceptor examples](#interceptor-examples)
    * [Plot graphs with selected data](#plot-graphs-with-selected-data)
    * [Control with gamepad or virtual joystick](#control-with-gamepad-or-virtual-joystick)
+   * [Editor for op_params.json](@editor-for-op_params.json)
  * [FAQ](#faq)
  * [Welcomed contributions](#welcomed-contributions)
 <!--te-->
@@ -64,6 +65,12 @@ Control with gamepad or virtual joystick
 -------------
 
 ![LiveDash Joystick](https://github.com/briskspirit/Interceptor/blob/master/LiveDash_joystick.gif "LiveDash Joystick")
+
+Editor for op_params.json
+-------------
+
+![LiveDash op_Edit](https://github.com/briskspirit/Interceptor/blob/master/LiveDash_opedit.jpg "LiveDash op_Edit")
+
 
 FAQ
 ============
