@@ -17,7 +17,7 @@ Table of Contents
  * [Interceptor examples](#interceptor-examples)
    * [Plot graphs with selected data](#plot-graphs-with-selected-data)
    * [Control with gamepad or virtual joystick](#control-with-gamepad-or-virtual-joystick)
-   * [Editor for op_params](@editor-for-op_params)
+   * [Editor for op_params](#editor-for-op_params)
  * [FAQ](#faq)
  * [Welcomed contributions](#welcomed-contributions)
 <!--te-->
