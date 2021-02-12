@@ -67,7 +67,13 @@ export class WebSocketHelper extends Component {
     };
 
     ws.onmessage = event => {
-      this.props.messageProcess(JSON.parse(event.data));
+
+      try {
+        this.props.messageProcess(JSON.parse(event.data));
+      } catch (e) {
+        console.log(e)
+        console.log(event.data)
+      }
     };
 
   }
