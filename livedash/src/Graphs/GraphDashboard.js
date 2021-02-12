@@ -22,17 +22,18 @@ const line_def_tpl = {
   type: 'scattergl',
   name: 'Line 1',
   mode: 'lines', //lines+markers
-  connectgaps: false
+  connectgaps: false,
+  datarevision: 0,
 };
 const plot_def_tpl = {
   layout: {
     title: 'debug_filler',
-    datarevision: 0
+    datarevision: 0,
   },
   frames: [],
   config: {},
   revision: 0,
-  lines_attach: []
+  lines_attach: [],
 }
 
 const styles = theme => ({
@@ -54,14 +55,12 @@ class GraphDashboard extends Component {
       show_addlines: false,
       show_addgraph: false,
       show_settings: false,
-      show_joystick: false,
-      layout_cols: 2,
+      layout_cols: 1,
       rateHz: 10,
-      max_datapoints: 100,
+      max_datapoints: 200,
       webgl: true,
       speeddial: false,
       render_revision: 0,
-      global_data_revision: 0,
     }
     this.wshelper = React.createRef(); //Reference to call sendMessage func inside WebSocketHelper
   }
@@ -78,6 +77,7 @@ class GraphDashboard extends Component {
   lines = {};
   selected = {};
   ws_status = '';
+  data_counter = 0;
 
   componentDidMount() {
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz); // Limit render? 4graphs/2lines or 2grapgs/8lines at 20Hz
@@ -90,12 +90,17 @@ class GraphDashboard extends Component {
 
   shouldComponentUpdate(prevProps, prevState) {
     if (!this.props.active) return false;
-    return prevState.render_revision !== this.state.render_revision;
+    if (prevState.render_revision !== this.state.render_revision ||
+      prevState.speeddial !== this.state.speeddial ||
+      prevState.show_addlines !== this.state.show_addlines ||
+      prevState.show_addgraph !== this.state.show_addgraph ||
+      prevState.show_settings !== this.state.show_settings) return true;
+    return false;
   }
 
   renderDelay = () => {
     clearInterval(this.render_delay);
-    this.setState({ render_revision: this.state.render_revision + 1 });
+    if (this.data_counter > this.state.render_revision) this.setState({ render_revision: this.data_counter });
     this.render_delay = setInterval(this.renderDelay, 1000 / this.state.rateHz)
   }
 
@@ -138,16 +143,17 @@ class GraphDashboard extends Component {
 
     if (this.lines.[name_y].x.slice(-1)[0] >= axis_x) return; // Skip same values for axis X (time)
 
-    this.setState({ global_data_revision: this.state.global_data_revision + 1 })
     this.lines.[name_y].x.push(axis_x);
     this.lines.[name_y].y.push(axis_y);
     if (this.lines.[name_y].x.length > values_limit && values_limit !== 0) {
       this.lines.[name_y].x.shift();
       this.lines.[name_y].y.shift();
     }
+    this.lines.[name_y].datarevision += 1;
+    this.data_counter += 1;
   };
 
-  addUpdatePlots = (plot_name = "", lines = []) => {
+  addUpdatePlots = (plot_name = "", datarevision = 0, lines = []) => {
     if (plot_name.length === 0) plot_name = (Math.random() + 1).toString(36).substring(7); // Generate random name
     if (!this.plots.[plot_name] && lines.length > 0) {
       const plot_tpl = JSON.parse(JSON.stringify(plot_def_tpl));
@@ -157,8 +163,8 @@ class GraphDashboard extends Component {
     }
     if (lines.length > 0) this.plots.[plot_name].lines_attach = lines;
     if (this.plots.[plot_name]) {
-      this.plots.[plot_name].revision += 1
-      this.plots.[plot_name].layout.datarevision = this.plots.[plot_name].revision + 1;
+      this.plots.[plot_name].revision = datarevision;
+      this.plots.[plot_name].layout.datarevision = datarevision;
     }
   };
 
@@ -167,12 +173,14 @@ class GraphDashboard extends Component {
     Object.keys(this.plots).forEach(key => {
       if (this.plots.[key].lines_attach.length) {
         const lines = {};
+        var datarevision_sum = 0;
         Object.values(this.plots.[key].lines_attach).forEach(line_name => {
           if (this.lines.[line_name]) {
             lines[line_name] = this.lines.[line_name];
+            datarevision_sum += this.lines.[line_name].datarevision;
           }
         });
-        this.addUpdatePlots(key);
+        this.addUpdatePlots(key, datarevision_sum);
         plots.push(<Grid item key={key} xs={12} md={12 / this.state.layout_cols}><ScatterPlot event={this.plots.[key]} lines={lines} /></Grid>);
       }
     });
@@ -202,7 +210,7 @@ class GraphDashboard extends Component {
         ) : (null)}
         {this.state.show_addgraph ? (
           <AddGraph
-            addplot={(plot_name, lines) => this.setState({ show_addgraph: false }, this.addUpdatePlots(plot_name, lines))}
+            addplot={(plot_name, lines) => this.setState({ show_addgraph: false }, this.addUpdatePlots(plot_name, 0, lines))}
             show={this.state.show_addgraph}
             lines_available={Object.keys(this.lines)}
           />
