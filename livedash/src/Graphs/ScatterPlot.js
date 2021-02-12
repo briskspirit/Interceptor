@@ -68,12 +68,13 @@ export class ScatterPlot extends Component {
   }
 
   render() {
-    //console.log("Rendering ScatterPlot: " + this.props.event.layout.title );
+    //console.log("Rendering ScatterPlot: " + this.props.event.layout.title);
+    //console.log("Revision: " + this.props.event.revision + " datarevision: " + this.props.event.layout.datarevision)
     return (
       <div ref={this.responsiveChartRef} id={this.props.event.layout.title} style={{ height: '46vh' }}>
         <Plot
           data={this.state.data}
-          layout={{ ...this.state.layout, ...this.layout, ...this.props.event.layout }}
+          layout={{ ...this.layout, ...this.state.layout, ...this.props.event.layout }}
           revision={this.props.event.revision}
           frames={[...this.state.frames, ...this.props.event.frames]}
           config={{ ...this.state.config, ...this.props.event.config }}
