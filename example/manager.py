@@ -19,7 +19,7 @@ from common.basedir import BASEDIR
 from common.spinner import Spinner
 from common.text_window import TextWindow
 import selfdrive.crash as crash
-from selfdrive.hardware import HARDWARE, EON, PC
+from selfdrive.hardware import HARDWARE, EON, PC, TICI
 from selfdrive.hardware.eon.apk import update_apks, pm_apply_packages, start_offroad
 from selfdrive.swaglog import cloudlog, add_logentries_handler
 from selfdrive.version import version, dirty
@@ -173,13 +173,12 @@ managed_processes = {
   "camerad": ("selfdrive/camerad", ["./camerad"]),
   "sensord": ("selfdrive/sensord", ["./sensord"]),
   "clocksd": ("selfdrive/clocksd", ["./clocksd"]),
-  "gpsd": ("selfdrive/sensord", ["./gpsd"]),
   "updated": "selfdrive.updated",
   "dmonitoringmodeld": ("selfdrive/modeld", ["./dmonitoringmodeld"]),
   "modeld": ("selfdrive/modeld", ["./modeld"]),
   "rtshield": "selfdrive.rtshield",
   "interbridged": "selfdrive.interbridge.interbridged",
-  "livedashserverd": "livedash.serverd",
+  "livedashserverd": "livedash.served",
 }
 
 daemon_processes = {
@@ -222,6 +221,10 @@ if EON:
     'sensord',
   ]
 
+if TICI:
+  managed_processes["timezoned"] = "selfdrive.timezoned"
+  persistent_processes += ['timezoned']
+
 car_started_processes = [
   'controlsd',
   'plannerd',
@@ -252,7 +255,6 @@ if not PC or WEBCAM:
 
 if EON:
   car_started_processes += [
-    'gpsd',
     'rtshield',
   ]
 else:
@@ -467,7 +469,7 @@ def manager_thread():
   while 1:
     msg = messaging.recv_sock(thermal_sock, wait=True)
 
-    if msg.thermal.freeSpace < 0.05:
+    if msg.thermal.freeSpacePercent < 0.05:
       logger_dead = True
 
     if msg.thermal.started:
