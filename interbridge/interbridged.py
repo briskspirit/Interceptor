@@ -15,19 +15,19 @@ class InterBridge:
   publishers = [
     'thermal',
     'controlsState',
-    'model',
+    'modelV2',
     'health',
     'carState',
     'carControl',
-    'plan',
+    'longitudinalPlan',
+    'lateralPlan',
     'liveLocation',
     'liveMpc',
     'liveLongitudinalMpc',
     'driverState',
     'liveParameters',
-    'pathPlan',
     'carParams',
-    'dMonitoringState',
+    'driverMonitoringState',
     'testJoystick',
   ]
 
