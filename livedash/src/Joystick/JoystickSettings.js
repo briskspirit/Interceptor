@@ -295,7 +295,7 @@ export class JoystickSettings extends Component {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.setSettings(this.state)} color="primary">
+          <Button onClick={() => this.props.setSettings(this.state)} color="default">
             Save
         </Button>
         </DialogActions>

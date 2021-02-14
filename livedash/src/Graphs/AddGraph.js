@@ -68,7 +68,7 @@ export class AddGraph extends Component {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.addplot(this.plotname, this.lines)} color="primary">
+          <Button onClick={() => this.props.addplot(this.plotname, this.lines)} color="default">
             Save
         </Button>
         </DialogActions>

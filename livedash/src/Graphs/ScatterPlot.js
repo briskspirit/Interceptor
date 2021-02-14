@@ -23,6 +23,8 @@ export class ScatterPlot extends Component {
         },
         showlegend: true,
         legend: { x: 0, y: 1.4 },
+        plot_bgcolor: "rgba(0,0,0,0)",
+        paper_bgcolor: "rgba(0,0,0,0)",
         width: 700,
         height: 450,
         margin: {

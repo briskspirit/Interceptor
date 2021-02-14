@@ -17,6 +17,7 @@ import {
   Badge,
   Box,
   Snackbar,
+  CssBaseline,
 } from '@material-ui/core';
 import MuiAlert from '@material-ui/lab/Alert';
 
@@ -28,8 +29,8 @@ import SignalWifi0BarIcon from '@material-ui/icons/SignalWifi0Bar';
 import SignalWifi4BarIcon from '@material-ui/icons/SignalWifi4Bar';
 import SignalWifiOffIcon from '@material-ui/icons/SignalWifiOff';
 
-import { ThemeProvider } from "@material-ui/styles";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from '@material-ui/styles';
+import { light_theme, dark_theme } from './theme/theme';
 
 const styles = {
   iconSpaced: {
@@ -40,18 +41,6 @@ const styles = {
   },
 };
 
-const theme = createMuiTheme({
-  palette: {
-    type: "light",
-  },
-  typography: {
-    "fontFamily": `"Roboto", "Helvetica", "Arial", sans-serif`,
-    "fontSize": 14,
-    "fontWeightLight": 300,
-    "fontWeightRegular": 400,
-    "fontWeightMedium": 500
-  }
-});
 
 
 class App extends Component {
@@ -64,12 +53,14 @@ class App extends Component {
       ws_url: this.ws_url || 'ws://192.168.43.1:8989',
       rateHz: 20,
       render_revision: 0,
+      dark_theme: false,
     };
     this.wshelper = React.createRef();
     this.pushgraphdata = React.createRef();
     this.pushopedit = React.createRef();
   }
 
+  theme = light_theme;
   ws_status = '';
   sent_count = 0;
   received_count = 0;
@@ -147,26 +138,35 @@ class App extends Component {
     };
   }
 
+  setTheme = set_dark_theme => {
+    if (set_dark_theme !== this.state.dark_theme) {
+      this.setState({ dark_theme: set_dark_theme });
+      this.theme = set_dark_theme ? { ...dark_theme } : { ...light_theme };
+    }
+    return this.state.dark_theme ? dark_theme : light_theme;
+  }
+
   render() {
     //console.log("Rendering App");
     const { classes } = this.props;
     return (
       <>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={this.theme}>
+          <CssBaseline />
           <WebSocketHelper
             ws_url={this.state.ws_url}
             messageProcess={this.messageProcess}
             ref={this.wshelper}
             status={status => this.ws_status = status}
           />
-          <AppBar position="sticky" color="inherit">
+          <AppBar position="sticky" color="default">
             <Toolbar>
               <Tabs
                 className={classes.mainTabs}
                 value={this.state.selectedTab}
                 onChange={(event, newValue) => this.setState({ selectedTab: newValue })}
                 indicatorColor="secondary"
-                textColor="primary"
+                textColor="inherit"
                 variant="scrollable"
                 scrollButtons="auto"
                 aria-label="Plugins tabs"
@@ -202,10 +202,11 @@ class App extends Component {
           </TabPanel>
           {this.state.show_mainsettings ? (
             <MainSettings
-              setSettings={(ws_url, rate) => this.setState({ show_mainsettings: false, ws_url: ws_url, rateHz: rate })}
+              setSettings={(ws_url, rate, dark_theme) => { this.setState({ show_mainsettings: false, ws_url: ws_url, rateHz: rate }); this.setTheme(dark_theme) }}
               show={this.state.show_mainsettings}
               ws_url={this.state.ws_url}
               rateHz={this.state.rateHz}
+              dark_theme={this.state.dark_theme}
             />
           ) : (null)}
           <Snackbar

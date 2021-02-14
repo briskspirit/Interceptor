@@ -84,14 +84,14 @@ export class MainSettings extends Component {
             </Grid>
             <Grid item>
               <FormControlLabel
-                control={<Switch disabled checked={this.state.dark_theme} onChange={() => this.setState({ dark_theme: !this.state.dark_theme })} name="dark_theme" />}
+                control={<Switch checked={this.state.dark_theme} onChange={() => this.setState({ dark_theme: !this.state.dark_theme })} name="dark_theme" />}
                 label="Dark theme"
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.setSettings(this.state.ws_url, this.state.rateHz, this.state.dark_theme)} color="primary">
+          <Button onClick={() => this.props.setSettings(this.state.ws_url, this.state.rateHz, this.state.dark_theme)} color="default">
             Save
         </Button>
         </DialogActions>

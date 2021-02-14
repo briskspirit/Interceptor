@@ -76,7 +76,7 @@ export class AddLines extends Component {
           {this.renderButtons()}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.setLogParams(this.selected)} color="primary">
+          <Button onClick={() => this.props.setLogParams(this.selected)} color="default">
             Save
         </Button>
         </DialogActions>

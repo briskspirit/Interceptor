@@ -107,7 +107,7 @@ export class GraphSettings extends Component {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => this.props.setSettings(this.state.cols, this.state.rateHz, this.state.max_datapoints, this.state.webgl)} color="primary">
+          <Button onClick={() => this.props.setSettings(this.state.cols, this.state.rateHz, this.state.max_datapoints, this.state.webgl)} color="default">
             Save
         </Button>
         </DialogActions>
