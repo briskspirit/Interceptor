@@ -1,3 +1,13 @@
+Version 0.1.3  (2021-02-14)
+=========================
+* Stop rendering hidden tabs, improves performance
+* Joystick.js: fix switching between rested modes
+* Interceptor buttons switch value type from boolean to float (support for analog buttons)
+* Fix graphs resizing, performance improvements for Graphs
+* Catch errors on JSON parsing in WebSocketHelper
+* Updated example for 0.8.2 big refactoring
+* First implementation of dark theme, needs improvement
+
 Version 0.1.2  (2021-02-07)
 =========================
  * Add op_params.json file editor
