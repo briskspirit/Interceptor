@@ -13,16 +13,36 @@ export class ScatterPlot extends Component {
     this.state = {
       data: Object.values(this.props.lines),
       layout: {
+        colorway: ["#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#e377c2", "#bcbd22", "#17becf", "#1f77b4"],
+        titlefont: {
+          family: 'Arial, sans-serif',
+          size: 24,
+          color: "rgba(119,119,119,1)",
+        },
         xaxis: {
           autorange: true,
+          gridcolor: "rgba(119,119,119,0.2)",
+          color: "rgba(119,119,119,1)",
+          //color: "#FF4500",
           //rangeslider: {} // Degrades performance slightly, for scattergl only as a scroll (not showing contents)
         },
         yaxis: {
           autorange: true,
+          color: "rgba(119,119,119,1)",
+          //color: "#FF4500",
+          gridcolor: "rgba(119,119,119,0.2)",
+          tickangle: "auto",
           type: 'linear'
         },
         showlegend: true,
-        legend: { x: 0, y: 1.4 },
+        legend: {
+          x: 0,
+          y: 1.06,
+          "orientation": "h",
+          font: {
+            color: "rgba(119,119,119,1)",
+          },
+        },
         plot_bgcolor: "rgba(0,0,0,0)",
         paper_bgcolor: "rgba(0,0,0,0)",
         width: 700,
@@ -31,7 +51,7 @@ export class ScatterPlot extends Component {
           l: 50,
           r: 5,
           b: 30,
-          t: 0,
+          t: 50,
           pad: 4
         },
         datarevision: 0
